@@ -1,0 +1,74 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+    <link href="static/css/su_style.css" rel="stylesheet" type="text/css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script>
+        function startTime() {
+            var today = new Date();
+            var mo = today.getMonth();
+            var d = today.getDate();
+            var h = today.getHours();
+            var m = today.getMinutes();
+            var s = today.getSeconds();
+            m = checkTime(m);
+            s = checkTime(s);
+            document.getElementById('time').innerHTML =
+                mo + 1 + " 月" + d + "日" + h + ":" + m + ":" + s;
+            document.getElementById('time').value =
+                mo + 1 + " 月" + d + "日" + h + ":" + m + ":" + s;
+            var t = setTimeout(startTime, 500);
+        }
+
+        function checkTime(i) {
+            if (i < 10) {
+                i = "0" + i;
+            }
+            return i;
+        }
+    </script>
+</head>
+
+<body onload="startTime()">
+<script type="text/javascript">
+    $(function () {
+        $("#emp").on("change", function () {
+            var user_id = $(this).children("option:selected").val();
+            $.ajax({
+                type: "POST",
+                url: "/get_user_data",
+                dataType: 'json',
+                data: {"user_id": user_id},
+                success: function (res) {
+                    html = "<table><th width='200px'>Date</th><th width='200px'>In Time</th><th width='200px'>Out Time</th>";
+                    for (var i = 0; i < res.length; i++) {
+                        html += "<tr><td>" + res[i]['date'] + "</td><td>" + res[i]['in_time'] + "</td><td>" + res[i]['out_time'] + "</td></tr>";
+                    }
+                    html += "</table>";
+                    $("#tablecont").html(html);
+                }
+            });
+        });
+    });
+</script>
+<div id="conSmall">
+    <div class="center">
+        <p2 id="time" style="font-size:200%"></p2>
+    </div>
+    <button id="start">Start</button>
+    <button id="finish">Finish</button>
+</div>
+<div>
+    <select id="emp">
+        <option value="0">Select Employee</option>
+        
+            <option value="employee1">Employee1</option>
+        
+            <option value="employee2">Employee2</option>
+        
+    </select>
+</div>
+<div id="tablecont"></div>
+</body>
+</html>
